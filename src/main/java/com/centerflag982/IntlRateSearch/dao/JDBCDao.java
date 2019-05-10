@@ -1,20 +1,87 @@
 package com.centerflag982.IntlRateSearch.dao;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 public class JDBCDao { //implements AirRateDAO
     private static final String JDBC_SQLITE_AIR_RATE_DB = "jdbc:sqlite:airRateDB.db";
     private static final String ORG_SQLITE_JDBC = "org.sqlite.JDBC";
 
-    public static Connection getConnection() throws SQLException {
+    private Connection connection;
+
+    public JDBCDao() {
         try {
             Class.forName(ORG_SQLITE_JDBC);
         } catch (ClassNotFoundException e){
             throw new RuntimeException("Cannot find database loader class", e);
         }
-        return DriverManager.getConnection(JDBC_SQLITE_AIR_RATE_DB);
+        //return DriverManager.getConnection(JDBC_SQLITE_AIR_RATE_DB);
+        try {
+            this.connection = DriverManager.getConnection(JDBC_SQLITE_AIR_RATE_DB);
+        }
+        catch (SQLException e){
+            throw new RuntimeException("Error getting database connection", e);
+        }
+    }
+
+    public List<String> checkForExpiredRates(){
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMdd");
+        String currDate = dateFormatter.format(calendar.getTime());
+        int currDateInt = Integer.parseInt(currDate);
+        List<String> expiredIATAs = new ArrayList<>();
+        try {
+            PreparedStatement expiredQuery = connection.prepareStatement("SELECT DISTINCT iata FROM rate_info WHERE expiration < " + currDateInt);
+            ResultSet expiredResults = expiredQuery.executeQuery();
+            while (expiredResults.next()) {
+                expiredIATAs.add(expiredResults.getString(1));
+            }
+        }
+        catch (SQLException e){
+            throw new RuntimeException("Error checking for expired rates", e);
+        }
+        return expiredIATAs;
+    }
+
+    public List<String> getAirports(String origOrDest){
+        List<String> airportResults = new ArrayList<>();
+        try {
+            PreparedStatement airportQuery = connection.prepareStatement("SELECT DISTINCT " + origOrDest + " FROM rate_info");
+            ResultSet airportResultSet = airportQuery.executeQuery();
+            while (airportResultSet.next()) {
+                airportResults.add(airportResultSet.getString(1));
+            }
+        }
+        catch (SQLException e){
+            throw new RuntimeException("Error checking " + origOrDest + " airports", e);
+        }
+        return airportResults;
+    }
+
+    public List<String> searchRates(String org, String dest){
+        List<String> rateSearchResults = new ArrayList<>();
+        try {
+            PreparedStatement rateQuery = connection.prepareStatement("SELECT * FROM rate_info WHERE origin = \"" + org + "\" AND destination = \"" + dest + "\"");
+            ResultSet rateResults = rateQuery.executeQuery();
+            while (rateResults.next()) {
+                String outputString = String.format("%-6s %-24s %-7s %-7s %8.2f %8.2f %8.2f %7.2f %7.2f %7.2f %7.2f %7s %7s %12d",
+                        rateResults.getString(1), rateResults.getString(2), rateResults.getString(3), rateResults.getString(4),
+                        rateResults.getFloat(5), rateResults.getFloat(6),rateResults.getFloat(7),rateResults.getFloat(8),rateResults.getFloat(9),
+                        rateResults.getFloat(10),rateResults.getFloat(11), rateResults.getString(12),rateResults.getString(13), rateResults.getInt(14));
+                rateSearchResults.add(outputString);
+            }
+        }
+        catch (SQLException e){
+            throw new RuntimeException("Error checking destination airports", e);
+        }
+        return rateSearchResults;
+    }
+
+    public void exportRates(String iata){
+
     }
 
 }

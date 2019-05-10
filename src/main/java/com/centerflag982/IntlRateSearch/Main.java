@@ -24,7 +24,6 @@ public class Main {
     }
 
     private void run(){
-        //List? expiredStuff = daoInstance.checkForExpiredData();
-        //userInteraction.initialPrompt(expiredStuff);
+        uiInstance.startUp();
     }
 }

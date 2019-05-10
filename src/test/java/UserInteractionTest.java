@@ -5,6 +5,6 @@ public class UserInteractionTest {
     @Test
     public void whatExceptionDoesThisThrow(){
         UserInteraction uiTest = new UserInteraction();
-        uiTest.greet("blah");
+        uiTest.startUp();
     }
 }
