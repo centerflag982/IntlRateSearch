@@ -4,6 +4,7 @@ import com.centerflag982.IntlRateSearch.dao.JDBCDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
@@ -90,6 +91,9 @@ public class UserInteraction {
             }
         }
         dao.exportRates(iataInput);
+        System.out.println("CSV file exported. LEAVE THIS WINDOW OPEN, make all necessary changes to the file, then press Enter to import.");
+        scanner.nextLine();
+        //TODO trigger import
     }
 
     private void quickUpdate(){

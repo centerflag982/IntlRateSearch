@@ -4,6 +4,7 @@ import com.centerflag982.IntlRateSearch.FileIO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -107,8 +108,21 @@ public class JDBCDao { //implements AirRateDAO
         catch (Exception e){ //SQLException, IOException
             throw new RuntimeException("Error exporting rate data.", e);
         }
-        //send iata, exportList to FileIO
+    }
 
+    public void importRates(String iata){ //considered using UPDATE, but when more than half the columns are being adjusted, the nuclear option actually seems more elegant
+        List<String> importList = ioInstance.importCSV(iata);
+        try {
+            //PreparedStatement nukeQuery = connection.prepareStatement("DELETE FROM rate_info WHERE iata = \"" + iata + "\"");
+            //nukeQuery.executeQuery();
+            for (String importString : importList){
+                //TODO break up string and format into usable query
+                PreparedStatement rebuildQuery = connection.prepareStatement("INSERT INTO rate_info VALUES");
+            }
+        }
+        catch (Exception e){ //SQLException, IOException
+            throw new RuntimeException("Error exporting rate data.", e);
+        }
     }
 
 }

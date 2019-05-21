@@ -1,11 +1,11 @@
 package com.centerflag982.IntlRateSearch;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
+@Component ("bridgekeeper")
 public class ImportValidator {
 
     //check iata
@@ -77,7 +77,7 @@ public class ImportValidator {
             Float.parseFloat(input);
         }
         catch (NumberFormatException e){
-            System.out.println("Invalid rate found: " + input + " - not a decimal number");
+            System.out.println("Invalid rate found: " + input + " - not a decimal number.");
             return false;
         }
         return true;
@@ -98,7 +98,7 @@ public class ImportValidator {
         }
         int tempInt = Integer.parseInt(input.substring(0,2));
         if (tempInt != 20 && tempInt != 99){
-            System.out.println("Invalid expiration date found: " + input + " - not in this century.");
+            System.out.println("Invalid expiration date found: " + input + " - this isn't even this century.");
             return false;
         }
         tempInt = Integer.parseInt(input.substring(4,6));
