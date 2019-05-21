@@ -17,7 +17,10 @@ public class UserInteraction {
     //private AppOutput outputInstance = new ConsoleOutput();
 
     private Scanner scanner = new Scanner(System.in);
-    private JDBCDao dao = new JDBCDao();
+
+    @Autowired
+    private JDBCDao dao;
+    //private JDBCDao dao = new JDBCDao();
 
     public void startUp() {
         outputInstance.displayOutput("hi etc");
@@ -76,13 +79,17 @@ public class UserInteraction {
     private void updateRates(){
         System.out.println("Enter IATA of airline to update.");
         boolean validInput = false;
+        String iataInput = "";
         while (!validInput){
-            String iataInput = scanner.nextLine().toUpperCase();
+            iataInput = scanner.nextLine().toUpperCase();
             iataInput = iataInput.replaceAll("[^a-zA-Z0-9]", "");
-            if (iataInput.length() != 2){
+            if (iataInput.length() == 2){
+                validInput = true;
+            } else {
                 System.out.println("IATA codes must be 2 alphanumeric characters.");
             }
         }
+        dao.exportRates(iataInput);
     }
 
     private void quickUpdate(){

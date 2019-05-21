@@ -1,16 +1,24 @@
 package com.centerflag982.IntlRateSearch.dao;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.io.IOException;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+@Component("dao")
 public class JDBCDao { //implements AirRateDAO
     private static final String JDBC_SQLITE_AIR_RATE_DB = "jdbc:sqlite:airRateDB.db";
     private static final String ORG_SQLITE_JDBC = "org.sqlite.JDBC";
 
     private Connection connection;
+
+    @Autowired
+    private FileIO ioInstance;
 
     public JDBCDao() {
         try {
@@ -81,6 +89,25 @@ public class JDBCDao { //implements AirRateDAO
     }
 
     public void exportRates(String iata){
+        List<String> exportList = new ArrayList<>();
+        try {
+            PreparedStatement exportQuery = connection.prepareStatement("SELECT * FROM rate_info WHERE iata = \"" + iata + "\"");
+            ResultSet exportResultSet = exportQuery.executeQuery();
+            String commaSepLine = "";
+            while (exportResultSet.next()) {
+                for (int i = 1; i < 15; i++){
+                    commaSepLine = commaSepLine + exportResultSet.getString(i) + ",";
+                }
+                //System.out.println(commaSepLine);
+                exportList.add(commaSepLine);
+                commaSepLine = "";
+            }
+            ioInstance.exportCSV(iata, exportList);
+        }
+        catch (Exception e){ //SQLException, IOException
+            throw new RuntimeException("Error exporting rate data.", e);
+        }
+        //send iata, exportList to FileIO
 
     }
 
