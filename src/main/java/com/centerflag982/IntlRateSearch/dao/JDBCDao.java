@@ -1,9 +1,9 @@
 package com.centerflag982.IntlRateSearch.dao;
 
+import com.centerflag982.IntlRateSearch.FileIO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
