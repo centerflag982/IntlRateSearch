@@ -12,7 +12,7 @@ import java.util.Calendar;
 import java.util.List;
 
 @Component("dao")
-public class JDBCDao { //implements AirRateDAO
+public class JDBCDao implements AirRateDAO{
     private static final String JDBC_SQLITE_AIR_RATE_DB = "jdbc:sqlite:airRateDB.db";
     private static final String ORG_SQLITE_JDBC = "org.sqlite.JDBC";
 
@@ -43,7 +43,8 @@ public class JDBCDao { //implements AirRateDAO
         int currDateInt = Integer.parseInt(currDate);
         List<String> expiredIATAs = new ArrayList<>();
         try {
-            PreparedStatement expiredQuery = connection.prepareStatement("SELECT DISTINCT iata FROM rate_info WHERE expiration < " + currDateInt);
+            PreparedStatement expiredQuery = connection.prepareStatement("SELECT DISTINCT iata FROM rate_info WHERE expiration < ?");
+            expiredQuery.setInt(1,currDateInt);
             ResultSet expiredResults = expiredQuery.executeQuery();
             while (expiredResults.next()) {
                 expiredIATAs.add(expiredResults.getString(1));
@@ -58,6 +59,7 @@ public class JDBCDao { //implements AirRateDAO
     public List<String> getAirports(String origOrDest){
         List<String> airportResults = new ArrayList<>();
         try {
+            System.out.println("Fetching airport list");
             PreparedStatement airportQuery = connection.prepareStatement("SELECT DISTINCT " + origOrDest + " FROM rate_info");
             ResultSet airportResultSet = airportQuery.executeQuery();
             while (airportResultSet.next()) {
@@ -73,7 +75,9 @@ public class JDBCDao { //implements AirRateDAO
     public List<String> searchRates(String org, String dest){
         List<String> rateSearchResults = new ArrayList<>();
         try {
-            PreparedStatement rateQuery = connection.prepareStatement("SELECT * FROM rate_info WHERE origin = \"" + org + "\" AND destination = \"" + dest + "\"");
+            PreparedStatement rateQuery = connection.prepareStatement("SELECT * FROM rate_info WHERE origin = ? AND destination = ?");
+            rateQuery.setString(1,org);
+            rateQuery.setString(2,dest);
             ResultSet rateResults = rateQuery.executeQuery();
             while (rateResults.next()) {
                 String outputString = String.format("%-6s %-24s %-7s %-7s %8.2f %8.2f %8.2f %7.2f %7.2f %7.2f %7.2f %7s %7s %12d",
@@ -92,7 +96,8 @@ public class JDBCDao { //implements AirRateDAO
     public void exportRates(String iata){
         List<String> exportList = new ArrayList<>();
         try {
-            PreparedStatement exportQuery = connection.prepareStatement("SELECT * FROM rate_info WHERE iata = \"" + iata + "\"");
+            PreparedStatement exportQuery = connection.prepareStatement("SELECT * FROM rate_info WHERE iata = ?");
+            exportQuery.setString(1, iata);
             ResultSet exportResultSet = exportQuery.executeQuery();
             String commaSepLine = "";
             while (exportResultSet.next()) {
@@ -113,15 +118,31 @@ public class JDBCDao { //implements AirRateDAO
     public void importRates(String iata){ //considered using UPDATE, but when more than half the columns are being adjusted, the nuclear option actually seems more elegant
         List<String> importList = ioInstance.importCSV(iata);
         try {
-            //PreparedStatement nukeQuery = connection.prepareStatement("DELETE FROM rate_info WHERE iata = \"" + iata + "\"");
-            //nukeQuery.executeQuery();
+            PreparedStatement nukeQuery = connection.prepareStatement("DELETE FROM rate_info WHERE iata = ?");
+            nukeQuery.setString(1, iata);
+            nukeQuery.executeUpdate();
             for (String importString : importList){
-                //TODO break up string and format into usable query
-                PreparedStatement rebuildQuery = connection.prepareStatement("INSERT INTO rate_info VALUES");
+                String[] importArray = importString.split(",");
+                String rebuiltImportString = "";
+                for (int i = 0; i <= 3; i++)
+                {
+                    rebuiltImportString = rebuiltImportString + "\"" + importArray[i] + "\", ";
+                }
+                for (int i = 4; i <= 10; i++)
+                {
+                    rebuiltImportString = rebuiltImportString + importArray[i] + ", ";
+                }
+                for (int i = 11; i <= 12; i++)
+                {
+                    rebuiltImportString = rebuiltImportString + "\"" + importArray[i] + "\", ";
+                }
+                rebuiltImportString = rebuiltImportString + importArray[13];
+                PreparedStatement rebuildQuery = connection.prepareStatement("INSERT INTO rate_info VALUES (" + rebuiltImportString + ")");
+                rebuildQuery.executeUpdate();
             }
         }
         catch (Exception e){ //SQLException, IOException
-            throw new RuntimeException("Error exporting rate data.", e);
+            throw new RuntimeException("Error importing rate data.", e);
         }
     }
 

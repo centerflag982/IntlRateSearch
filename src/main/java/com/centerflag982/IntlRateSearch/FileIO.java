@@ -32,6 +32,7 @@ public class FileIO {
         File importFile = new File(fileName);
         try {
             Scanner scanner = new Scanner(importFile);
+            scanner.nextLine(); // skip over header
             String importString;
             while (scanner.hasNextLine()){
                 importString = scanner.nextLine();
@@ -44,7 +45,13 @@ public class FileIO {
         catch (FileNotFoundException e){
             throw new RuntimeException("CSV file missing, did you rename or delete it? (I'm blaming you either way)", e);
         }
+        //TODO deleting doesn't work for some reason
+        if(!importFile.delete())
+        {
+            System.out.println(iata + " CSV file failed to delete after import, please do so manually");
+        }
         return importList;
     }
+
 
 }

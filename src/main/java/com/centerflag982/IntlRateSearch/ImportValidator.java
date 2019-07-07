@@ -27,7 +27,9 @@ public class ImportValidator {
         if (checkList.contains("false")){
             return false;
         }
-        return checkList.contains("false");
+        else{
+            return true;
+        }
     }
 
     private boolean checkLength(String[] input){

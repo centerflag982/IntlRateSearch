@@ -31,7 +31,7 @@ public class UserInteraction {
         }
         boolean validInput = false;
         while (!validInput) {
-            outputInstance.displayOutput("[1] search for rates    [2] Update an airline  [3] Update expired airlines");
+            outputInstance.displayOutput("[1] Search for rates    [2] Update an airline  [3] Update expired airlines");
             int selection = Integer.parseInt(scanner.nextLine()); //NumberFormatException
             switch (selection) {
                 case 1:
@@ -44,7 +44,7 @@ public class UserInteraction {
                     break;
                 case 3:
                     validInput = true;
-                    quickUpdate();
+                    quickUpdate(expiredList);
                     break;
                 default:
                     System.out.println("Please enter a valid option.");
@@ -93,11 +93,24 @@ public class UserInteraction {
         dao.exportRates(iataInput);
         System.out.println("CSV file exported. LEAVE THIS WINDOW OPEN, make all necessary changes to the file, then press Enter to import.");
         scanner.nextLine();
-        //TODO trigger import
+        dao.importRates(iataInput);
+        System.out.println("Updated successfully.");
     }
 
-    private void quickUpdate(){
+    private void quickUpdate(List<String> expiredList){
         //do stuff
+        String iataListString = "";
+        for (String iata : expiredList){
+            dao.exportRates(iata);
+            iataListString = iataListString + " " + iata;
+        }
+        System.out.println("CSV files exported for the following airlines:" + iataListString);
+        System.out.println("LEAVE THIS WINDOW OPEN, make all necessary changes to the files, then press Enter to import.");
+        scanner.nextLine();
+        for (String iata : expiredList){
+            dao.importRates(iata);
+        }
+        System.out.println("All airlines updated successfully.");
     }
 
 
