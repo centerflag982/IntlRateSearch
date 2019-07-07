@@ -12,9 +12,6 @@ public class Main {
     private UserInteraction uiInstance;
     //private UserInteraction uiInstance = new UserInteraction();
 
-    //@Autowired
-    //private MetroDao daoInstance;
-    //private MetroDao daoInstance = new JDBCDao();
 
     public static void main (String [] args){
         ApplicationContext context = new ClassPathXmlApplicationContext("application-context.xml");

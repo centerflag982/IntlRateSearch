@@ -24,7 +24,7 @@ public class UserInteraction {
     //private JDBCDao dao = new JDBCDao();
 
     public void startUp() {
-        outputInstance.displayOutput("hi etc");
+        outputInstance.displayOutput("Welcome to my cheap 7L knockoff, try not to break it please");
         List<String> expiredList = dao.checkForExpiredRates();
         if (!expiredList.isEmpty()) {
             System.out.println("WARNING: " + expiredList.size() + " airlines' rates are expired!");

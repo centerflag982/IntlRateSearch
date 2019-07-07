@@ -41,11 +41,11 @@ public class FileIO {
                 }
             //TODO for some reason I feel like there's supposed to be something here???????
             }
+            scanner.close();
         }
         catch (FileNotFoundException e){
             throw new RuntimeException("CSV file missing, did you rename or delete it? (I'm blaming you either way)", e);
         }
-        //TODO deleting doesn't work for some reason
         if(!importFile.delete())
         {
             System.out.println(iata + " CSV file failed to delete after import, please do so manually");
