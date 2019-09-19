@@ -4,7 +4,6 @@ import com.centerflag982.IntlRateSearch.FileIO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,7 +26,6 @@ public class JDBCDao implements AirRateDAO{
         } catch (ClassNotFoundException e){
             throw new RuntimeException("Cannot find database loader class", e);
         }
-        //return DriverManager.getConnection(JDBC_SQLITE_AIR_RATE_DB);
         try {
             this.connection = DriverManager.getConnection(JDBC_SQLITE_AIR_RATE_DB);
         }
@@ -59,8 +57,8 @@ public class JDBCDao implements AirRateDAO{
     public List<String> getAirports(String origOrDest){
         List<String> airportResults = new ArrayList<>();
         try {
-            System.out.println("Fetching airport list");
-            PreparedStatement airportQuery = connection.prepareStatement("SELECT DISTINCT " + origOrDest + " FROM rate_info");
+            //System.out.println("Fetching airport list");
+            PreparedStatement airportQuery = connection.prepareStatement("SELECT DISTINCT " + origOrDest + " FROM rate_info"); //concat in statement is fine here, string is program-generated rather than input
             ResultSet airportResultSet = airportQuery.executeQuery();
             while (airportResultSet.next()) {
                 airportResults.add(airportResultSet.getString(1));
@@ -104,7 +102,6 @@ public class JDBCDao implements AirRateDAO{
                 for (int i = 1; i < 15; i++){
                     commaSepLine = commaSepLine + exportResultSet.getString(i) + ",";
                 }
-                //System.out.println(commaSepLine);
                 exportList.add(commaSepLine);
                 commaSepLine = "";
             }

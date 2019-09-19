@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -29,28 +30,30 @@ public class UserInteraction {
         if (!expiredList.isEmpty()) {
             System.out.println("WARNING: " + expiredList.size() + " airlines' rates are expired!");
         }
-        boolean validInput = false;
-        while (!validInput) {
-            outputInstance.displayOutput("[1] Search for rates    [2] Update an airline  [3] Update expired airlines");
-            int selection = Integer.parseInt(scanner.nextLine()); //NumberFormatException
-            switch (selection) {
-                case 1:
-                    validInput = true;
+        String selectString = "";
+        while (!selectString.matches("Q")){
+            String validSelections[] = {"1", "2", "3", "Q"};
+            outputInstance.displayOutput("[1] Search for rates   [2] Update an airline   [3] Update expired airlines   [Q] Exit");
+            selectString = scanner.nextLine();
+            switch (selectString) {
+                case "1":
                     searchRates();
                     break;
-                case 2:
-                    validInput = true;
+                case "2":
                     updateRates();
                     break;
-                case 3:
-                    validInput = true;
+                case "3":
                     quickUpdate(expiredList);
+                    break;
+                case "Q":
+                    System.out.println("Bye");
                     break;
                 default:
                     System.out.println("Please enter a valid option.");
             }
         }
     }
+
 
     private void searchRates(){
         List<String> validOrigins = dao.getAirports("origin");

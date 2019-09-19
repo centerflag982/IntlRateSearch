@@ -39,7 +39,8 @@ public class FileIO {
                 if (validator.validateString(importString)){
                     importList.add(importString);
                 }
-            //TODO for some reason I feel like there's supposed to be something here???????
+            //TODO for some reason I feel like there's supposed to be something here??????
+                //Guess not, everything seems to be working fine
             }
             scanner.close();
         }
