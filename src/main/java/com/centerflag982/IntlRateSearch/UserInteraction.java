@@ -32,9 +32,8 @@ public class UserInteraction {
         }
         String selectString = "";
         while (!selectString.matches("Q")){
-            String validSelections[] = {"1", "2", "3", "Q"};
-            outputInstance.displayOutput("[1] Search for rates   [2] Update an airline   [3] Update expired airlines   [Q] Exit");
-            selectString = scanner.nextLine();
+            outputInstance.displayOutput("[1] Search for rates   [2] Update an airline   [3] Update expired airlines   [4] Backup DB   [5] Load backup CSV   [Q] Exit");
+            selectString = scanner.nextLine().toUpperCase();
             switch (selectString) {
                 case "1":
                     searchRates();
@@ -44,6 +43,12 @@ public class UserInteraction {
                     break;
                 case "3":
                     quickUpdate(expiredList);
+                    break;
+                case "4":
+                    databaseBackup();
+                    break;
+                case "5":
+                    loadBackup();
                     break;
                 case "Q":
                     System.out.println("Bye");
@@ -101,7 +106,6 @@ public class UserInteraction {
     }
 
     private void quickUpdate(List<String> expiredList){
-        //do stuff
         String iataListString = "";
         for (String iata : expiredList){
             dao.exportRates(iata);
@@ -116,5 +120,15 @@ public class UserInteraction {
         System.out.println("All airlines updated successfully.");
     }
 
+    private void databaseBackup(){
+        dao.exportRates("BACKUP");
+        System.out.println("All DB info backed up to BACKUP_data.csv");
+        System.out.println("BE SURE TO COPY THE FILE ELSEWHERE.");
+    }
 
+    private void loadBackup(){
+        System.out.println("MAKE SURE \"BACKUP_data.csv\" IS PRESENT, then press enter to continue.");
+        dao.importRates("BACKUP");
+        System.out.println("DB overwritten from backup.");
+    }
 }

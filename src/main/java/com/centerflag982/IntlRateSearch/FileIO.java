@@ -16,7 +16,7 @@ public class FileIO {
 
     public void exportCSV(String iata, List<String> exportList) throws IOException{
 
-        String fileName = "./" + iata + "data.csv";
+        String fileName = "./" + iata + "_data.csv";
         BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileName));
         PrintWriter printWriter = new PrintWriter(bufferedWriter);
         printWriter.println("#IATA,AIRLINE NAME,ORIG,DEST,MIN,-45,45,100,300,500,1000,FSC,SEC,EXPIRES");
@@ -28,7 +28,7 @@ public class FileIO {
 
     public List<String> importCSV(String iata){
         List<String> importList = new ArrayList<>();
-        String fileName = "./" + iata + "data.csv";
+        String fileName = "./" + iata + "_data.csv";
         File importFile = new File(fileName);
         try {
             Scanner scanner = new Scanner(importFile);

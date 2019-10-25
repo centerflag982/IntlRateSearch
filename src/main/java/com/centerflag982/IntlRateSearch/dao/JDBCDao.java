@@ -94,8 +94,14 @@ public class JDBCDao implements AirRateDAO{
     public void exportRates(String iata){
         List<String> exportList = new ArrayList<>();
         try {
-            PreparedStatement exportQuery = connection.prepareStatement("SELECT * FROM rate_info WHERE iata = ?");
-            exportQuery.setString(1, iata);
+            String queryString = "SELECT * FROM rate_info";
+            if (!iata.equals("BACKUP")){
+                queryString = queryString + " WHERE iata = ?";
+            }
+            PreparedStatement exportQuery = connection.prepareStatement(queryString);
+            if (!iata.equals("BACKUP")){
+                exportQuery.setString(1, iata);
+            }
             ResultSet exportResultSet = exportQuery.executeQuery();
             String commaSepLine = "";
             while (exportResultSet.next()) {
