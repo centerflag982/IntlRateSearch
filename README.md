@@ -7,3 +7,6 @@ As it turns out, the time commitment required just to set up and maintain the da
 
 Requires the following sqlite database to be present in /src, since git doesn't seem to like the file type:
 https://www.dropbox.com/s/pott0p4y3ludge7/airRateDB.db?dl=0
+
+Please note, the database is a rather barebones example, with only a few airlines and a handful of airport codes included.
+Usable origin/destination pairs are JFK-ABZ and ORD-PVG.
